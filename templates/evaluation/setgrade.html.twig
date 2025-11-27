@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Notes eval{% endblock %}
+
+{% block body %}
+    <h1>Notes de l'évaluation {{ evaluation.label }} pour la classe de {{ evaluation.classLevel.label }}</h1>
+
+    {{ form(form) }}
+
+    <a href="{{ path('app_professor_evaluations', {id: app.user.id}) }}">Retour à la liste des évaluations</a>
+
+{% endblock %}

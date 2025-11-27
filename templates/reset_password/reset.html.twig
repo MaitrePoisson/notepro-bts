@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reset your password{% endblock %}
+
+{% block body %}
+    <h1>Reset your password</h1>
+    {% for flash_error in app.flashes('reset_password_error') %}
+        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+    {% endfor %}
+
+    {{ form_start(resetForm) }}
+    {% if resetForm.plainPasswordCurrent is defined %}
+    <div class="row m-3">
+        <div class="form-floating">
+            {{ form_row(resetForm.plainPasswordCurrent, {'disabled' : true}) }}
+        </div>
+    </div>
+    {% endif %}
+    <div class="row m-3">
+        <div class="form-floating">
+            {{ form_row(resetForm.plainPassword) }}
+        </div>
+    </div>
+    <button class="btn btn-primary">Réinitialiser le mot de passe</button>
+    {{ form_end(resetForm) }}
+{% endblock %}

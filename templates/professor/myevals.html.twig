@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes évals{% endblock %}
+
+{% block body %}
+    <div class="container">
+    <h1>Mes évals</h1>
+
+    <table>
+        <thead>
+        <tr>
+            <th scope="col">Évaluation</th>
+            <th scope="col">Notes</th>
+            <th scope="col">Modification</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for eval in evals %}
+        <tr>
+            <td>{{ eval.label }}</td>
+            <td><a href="{{ path('app_evaluation_set_grades', {id: eval.id}) }}"><button class="btn btn-secondary">Notes</button></a></td>
+            <td><a href="{{ path('app_evaluation_edit', {id: eval.id}) }}"><button class="btn btn-warning">Modifier</button></a></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ path('app_evaluation_new') }}">Créer une nouvelle évaluation</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bienvenue sur NotePro!{% endblock %}
+
+{% block body %}
+    {% for success in app.flashes('success') %}
+        {{ success }}
+    {% endfor %}
+
+{% endblock %}

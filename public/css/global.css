@@ -1,0 +1,25 @@
+.logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 5vh;
+    margin: 0;
+}
+
+.circle {
+    width: 5%; /* Adjust based on your design */
+    padding-bottom: 10%; /* Maintain aspect ratio for a circle */
+    border-radius: 50%;
+    background-color: #3498db;
+    color: #ffffff;
+    font-size: 10vw; /* Adjust based on your design */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.initials {
+    text-align: center;
+    line-height: 1; /* Center the text vertically */
+}
