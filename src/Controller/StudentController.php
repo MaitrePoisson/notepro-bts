@@ -106,11 +106,13 @@ class StudentController extends AbstractController
     {
         $gradesBySubject = $student->getGradesBySubject();
         $averages = $student->getAveragesBySubject();
+        $advices = $student->getAdvicesBySubject($averages);
 
         return $this->render('student/mygrades.html.twig', [
             'student' => $student,
             'gradesBySubject' => $gradesBySubject,
             'averages' => $averages,
+            'advices' => $advices,
         ]);
     }
 }

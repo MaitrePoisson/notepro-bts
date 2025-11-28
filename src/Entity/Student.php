@@ -113,4 +113,46 @@ class Student extends User
 
         return $averages;
     }
+
+    public function getAdvicesBySubject(array $averages): array
+    {
+        $advices = [];
+
+        foreach ($averages as $subject => $average) {
+            if ($average !== null && $average < 10) {
+                $advices[$subject] = $this->generateAdviceForSubject($subject);
+            }
+        }
+
+        return $advices;
+    }
+
+    private function generateAdviceForSubject(string $subject): string
+    {
+        $subjectLower = mb_strtolower($subject);
+
+        if (str_contains($subjectLower, 'math')) {
+            return "Revois les exercices de base et n'hésite pas à refaire les démonstrations du cours.";
+        }
+        if (str_contains($subjectLower, 'anglais') || str_contains($subjectLower, 'english')) {
+            return "Essaie de regarder des séries en VOST et de lire des articles de presse anglophone.";
+        }
+        if (str_contains($subjectLower, 'français') || str_contains($subjectLower, 'culture')) {
+            return "Soigne ton orthographe et structure davantage tes arguments lors des rédactions.";
+        }
+        if (str_contains($subjectLower, 'bloc 1') || str_contains($subjectLower, 'support')) {
+            return "Entraîne-toi sur des machines virtuelles pour mieux maîtriser les commandes système.";
+        }
+        if (str_contains($subjectLower, 'bloc 2') || str_contains($subjectLower, 'dév')) {
+            return "Pratique le code régulièrement (Kata, petits projets) pour acquérir les automatismes.";
+        }
+        if (str_contains($subjectLower, 'cyber')) {
+            return "Revois les concepts fondamentaux du modèle OSI et les protocoles de sécurité.";
+        }
+        if (str_contains($subjectLower, 'cejm')) {
+            return "Fais des fiches de synthèse sur les concepts juridiques et économiques clés.";
+        }
+
+        return "Prends rendez-vous avec le professeur pour identifier les points de blocage spécifiques.";
+    }
 }

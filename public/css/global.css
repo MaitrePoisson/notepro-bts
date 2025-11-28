@@ -1,25 +1,83 @@
-.logo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 5vh;
-    margin: 0;
+:root {
+    --primary-color: #4e73df;
+    --secondary-color: #858796;
+    --background-color: #f8f9fc;
+    --card-border-radius: 0.75rem;
 }
 
-.circle {
-    width: 5%; /* Adjust based on your design */
-    padding-bottom: 10%; /* Maintain aspect ratio for a circle */
-    border-radius: 50%;
-    background-color: #3498db;
-    color: #ffffff;
-    font-size: 10vw; /* Adjust based on your design */
+body {
+    background-color: var(--background-color);
+    font-family: 'Nunito', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #5a5c69;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
-.initials {
-    text-align: center;
-    line-height: 1; /* Center the text vertically */
+h1, h2, h3, h4, h5, h6 {
+    color: #4e73df;
+    font-weight: 700;
+}
+
+.navbar {
+    background-color: #fff !important;
+    box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
+}
+
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: #4e73df !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.card {
+    border: none;
+    border-radius: var(--card-border-radius);
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s;
+}
+
+.card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid #e3e6f0;
+    border-radius: var(--card-border-radius) var(--card-border-radius) 0 0 !important;
+    font-weight: 700;
+    color: #4e73df;
+    padding: 1rem 1.25rem;
+}
+
+.btn-primary {
+    background-color: #4e73df;
+    border-color: #4e73df;
+    border-radius: 0.35rem;
+    padding: 0.5rem 1rem;
+}
+
+.btn-primary:hover {
+    background-color: #2e59d9;
+    border-color: #2653d4;
+}
+
+.table thead th {
+    background-color: #4e73df;
+    color: white;
+    border-top: none;
+}
+
+.badge {
+    padding: 0.5em 0.75em;
+}
+
+main {
+    flex: 1;
+}
+
+footer {
+    background-color: white;
+    padding: 2rem 0;
+    box-shadow: 0 -0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+    margin-top: auto;
 }

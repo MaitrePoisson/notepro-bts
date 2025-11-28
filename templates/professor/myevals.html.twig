@@ -1,29 +1,70 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes évals{% endblock %}
+{% block title %}Mes évaluations{% endblock %}
 
 {% block body %}
     <div class="container">
-    <h1>Mes évals</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h2">Gestion des évaluations</h1>
+            <a href="{{ path('app_evaluation_new') }}" class="btn btn-primary rounded-pill px-4">
+                + Nouvelle évaluation
+            </a>
+        </div>
 
-    <table>
-        <thead>
-        <tr>
-            <th scope="col">Évaluation</th>
-            <th scope="col">Notes</th>
-            <th scope="col">Modification</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for eval in evals %}
-        <tr>
-            <td>{{ eval.label }}</td>
-            <td><a href="{{ path('app_evaluation_set_grades', {id: eval.id}) }}"><button class="btn btn-secondary">Notes</button></a></td>
-            <td><a href="{{ path('app_evaluation_edit', {id: eval.id}) }}"><button class="btn btn-warning">Modifier</button></a></td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    <a href="{{ path('app_evaluation_new') }}">Créer une nouvelle évaluation</a>
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                        <tr>
+                            <th class="ps-4 py-3">Titre</th>
+                            <th class="py-3">Classe</th>
+                            <th class="py-3">Matière</th>
+                            <th class="text-center py-3">Date</th>
+                            <th class="text-center py-3">Publication</th>
+                            <th class="text-end pe-4 py-3">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for eval in evals %}
+                            <tr>
+                                <td class="ps-4 fw-bold text-dark">{{ eval.label }}</td>
+                                <td><span class="badge bg-info text-dark">{{ eval.classLevel.label }}</span></td>
+                                <td>{{ eval.subject.label }}</td>
+                                <td class="text-center">{{ eval.date ? eval.date|date('d/m/Y') : '' }}</td>
+                                <td class="text-center">
+                                    {% if eval.datePublish %}
+                                        {% if eval.datePublish <= date() %}
+                                            <span class="badge bg-success rounded-pill">Publié</span>
+                                        {% else %}
+                                            <span class="badge bg-warning text-dark rounded-pill">Différé au {{ eval.datePublish|date('d/m') }}</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="badge bg-secondary rounded-pill">Non défini</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group">
+                                        <a href="{{ path('app_evaluation_set_grades', {id: eval.id}) }}" class="btn btn-sm btn-outline-primary">
+                                            Saisir notes
+                                        </a>
+                                        <a href="{{ path('app_evaluation_edit', {id: eval.id}) }}" class="btn btn-sm btn-outline-secondary">
+                                            Modifier
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center py-5 text-muted">
+                                    Vous n'avez créé aucune évaluation pour le moment.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %}
