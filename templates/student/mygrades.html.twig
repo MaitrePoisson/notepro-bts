@@ -1,86 +1,158 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes notes - NotePro{% endblock %}
+{% block title %}Mes résultats - NotePro{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-5 border-bottom pb-3">
-            <div>
-                <h1 class="h2 mb-0">Bulletin de notes</h1>
-                <span class="text-muted">Année scolaire 2024-2025</span>
+    <div class="container py-4">
+        {# Calculs #}
+        {% set total = 0 %}
+        {% set count = 0 %}
+        {% set best_grade = 0 %}
+        {% set subjects_labels = [] %}
+        {% set subjects_data = [] %}
+
+        {% for subject, avg in averages %}
+            {% if avg is not null %}
+                {% set total = total + avg %}
+                {% set count = count + 1 %}
+                {% set subjects_labels = subjects_labels|merge([subject]) %}
+                {% set subjects_data = subjects_data|merge([avg]) %}
+                {% if avg > best_grade %}
+                    {% set best_grade = avg %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+
+        {% set generalAverage = count > 0 ? (total / count)|round(2) : 0 %}
+
+        {# En-tête Élève #}
+        <div class="row align-items-center mb-5">
+            <div class="col-md-8">
+                <h1 class="display-5 fw-bold text-dark mb-1">Mes Résultats</h1>
+                <p class="text-muted fs-5">Suivi de la progression scolaire - <span class="text-primary">{{ student.name }}</span></p>
             </div>
-            <div>
-                <span class="h4 text-primary fw-bold">{{ student.name }}</span>
+            <div class="col-md-4 text-md-end">
+                <span class="badge bg-light text-dark border px-3 py-2 rounded-pill">Année 2024-2025</span>
             </div>
         </div>
 
+        {# Cartes Statistiques (KPI) #}
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 overflow-hidden text-white" style="background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);">
+                    <div class="card-body p-4 position-relative">
+                        <div class="position-relative z-2">
+                            <h6 class="text-uppercase opacity-75 mb-2">Moyenne Générale</h6>
+                            <h2 class="display-4 fw-bold mb-0">{{ generalAverage }}<span class="fs-4">/20</span></h2>
+                        </div>
+                        <div class="position-absolute top-0 end-0 opacity-25" style="transform: translate(30%, -20%); font-size: 8rem;">📊</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 bg-white">
+                    <div class="card-body p-4 d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="text-uppercase text-muted mb-2 fs-7 fw-bold">Meilleure Moyenne</h6>
+                            <h3 class="fw-bold text-success mb-0">{{ best_grade }}<span class="fs-5 text-muted">/20</span></h3>
+                        </div>
+                        <div class="bg-success-subtle text-success p-3 rounded-circle">
+                            <span class="fs-3">🏆</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100 bg-white">
+                    <div class="card-body p-4 d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <h6 class="text-uppercase text-muted mb-2 fs-7 fw-bold">Matières évaluées</h6>
+                            <h3 class="fw-bold text-dark mb-0">{{ count }}</h3>
+                        </div>
+                        <div class="bg-info-subtle text-info p-3 rounded-circle">
+                            <span class="fs-3">📚</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Section Graphique #}
+        <div class="card border-0 shadow-sm mb-5">
+            <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                <h5 class="fw-bold">Aperçu des performances</h5>
+            </div>
+            <div class="card-body p-4">
+                <div style="height: 350px; width: 100%;">
+                    <canvas id="gradesChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="fw-bold mb-4">Détail par matière</h4>
+
+        {# Liste des notes par matière #}
         <div class="row">
             <div class="col-lg-12">
                 {% for subject, grades in gradesBySubject %}
-                    <div class="card mb-4 shadow-sm border-0">
-                        <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-                            <h5 class="mb-0 text-primary fw-bold d-flex align-items-center">
-                                <span class="badge bg-primary me-3 rounded-pill" style="width: 10px; height: 10px; padding: 0;">&nbsp;</span>
-                                {{ subject }}
-                            </h5>
-                            {% if averages[subject] is not null %}
-                                <div class="d-flex flex-column align-items-end">
-                                <span class="badge {{ averages[subject] >= 10 ? 'bg-success' : 'bg-danger' }} rounded-pill fs-6 px-3">
-                                    {{ averages[subject] }}/20
-                                </span>
-                                    <small class="text-muted mt-1" style="font-size: 0.7rem;">MOYENNE</small>
+                    <div class="card mb-4 border-0 shadow-sm rounded-3 overflow-hidden group-card">
+                        <div class="card-header bg-white py-3 px-4 border-bottom d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="icon-shape bg-primary text-white rounded-3 me-3 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                    {{ subject|slice(0, 1) }}
                                 </div>
-                            {% else %}
-                                <span class="badge bg-secondary rounded-pill">N/A</span>
+                                <h5 class="mb-0 fw-bold text-dark">{{ subject }}</h5>
+                            </div>
+                            {% if averages[subject] is not null %}
+                                <div class="text-end">
+                                    <span class="d-block fw-bold fs-5 {{ averages[subject] >= 10 ? 'text-success' : 'text-danger' }}">
+                                        {{ averages[subject] }}/20
+                                    </span>
+                                </div>
                             {% endif %}
                         </div>
 
                         <div class="card-body p-0">
                             {% if advices[subject] is defined %}
-                                <div class="alert alert-warning border-0 rounded-0 mb-0 d-flex align-items-center" role="alert">
-                                    <div class="fs-4 me-3">💡</div>
-                                    <div>
-                                        <strong class="d-block text-uppercase" style="font-size: 0.8rem;">Conseil pour progresser :</strong>
-                                        {{ advices[subject] }}
-                                    </div>
+                                <div class="bg-warning-subtle text-warning-emphasis p-3 border-bottom d-flex">
+                                    <span class="me-2">💡</span>
+                                    <small class="fw-semibold">{{ advices[subject] }}</small>
                                 </div>
                             {% endif %}
 
                             <div class="table-responsive">
-                                <table class="table table-hover align-middle mb-0">
-                                    <thead class="table-light">
+                                <table class="table table-hover mb-0 align-middle">
+                                    <thead class="bg-light">
                                     <tr>
-                                        <th class="ps-4 text-uppercase text-muted fs-7 border-0" style="width: 50%">Devoir</th>
-                                        <th class="text-center text-uppercase text-muted fs-7 border-0">Date</th>
-                                        <th class="text-end text-uppercase text-muted fs-7 border-0">Note</th>
-                                        <th class="text-end pe-4 text-uppercase text-muted fs-7 border-0">Barème</th>
+                                        <th class="ps-4 text-uppercase fs-7 text-muted border-0 py-3">Devoir</th>
+                                        <th class="text-center text-uppercase fs-7 text-muted border-0 py-3">Date</th>
+                                        <th class="text-end text-uppercase fs-7 text-muted border-0 py-3">Note</th>
+                                        <th class="text-end pe-4 text-uppercase fs-7 text-muted border-0 py-3">Coeff/Max</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     {% for grade in grades %}
                                         <tr>
-                                            <td class="ps-4 border-bottom-0 fw-medium">{{ grade.evaluation.label }}</td>
-                                            <td class="text-center border-bottom-0 text-muted">
+                                            <td class="ps-4 fw-medium">{{ grade.evaluation.label }}</td>
+                                            <td class="text-center text-muted fs-7">
                                                 {{ grade.evaluation.date ? grade.evaluation.date|date('d/m/Y') : '-' }}
                                             </td>
-                                            <td class="text-end border-bottom-0">
+                                            <td class="text-end">
                                                 {% if grade.present %}
-                                                    <span class="fw-bold fs-5 {{ grade.grade >= (grade.evaluation.bareme / 2) ? 'text-dark' : 'text-danger' }}">
+                                                    <span class="badge {{ grade.grade >= (grade.evaluation.bareme / 2) ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger' }} rounded-pill fs-6 border px-3">
                                                         {{ grade.grade }}
                                                     </span>
                                                 {% else %}
-                                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle">ABS</span>
+                                                    <span class="badge bg-secondary-subtle text-secondary border">ABS</span>
                                                 {% endif %}
                                             </td>
-                                            <td class="text-end pe-4 border-bottom-0 text-muted small">
+                                            <td class="text-end pe-4 text-muted small">
                                                 / {{ grade.evaluation.bareme }}
                                             </td>
                                         </tr>
                                     {% else %}
                                         <tr>
-                                            <td colspan="4" class="text-center py-4 text-muted fst-italic">
-                                                Aucune note enregistrée.
-                                            </td>
+                                            <td colspan="4" class="text-center py-4 text-muted">Aucune note.</td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -89,13 +161,78 @@
                         </div>
                     </div>
                 {% else %}
-                    <div class="text-center py-5">
-                        <div class="mb-3 text-muted display-1">📭</div>
-                        <h3>Aucune note disponible</h3>
-                        <p class="text-muted">Vos résultats apparaîtront ici une fois publiés.</p>
+                    <div class="alert alert-light text-center py-5 shadow-sm border-0">
+                        <p class="mb-0 text-muted">Aucune donnée disponible.</p>
                     </div>
                 {% endfor %}
             </div>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('gradesChart');
+            if (ctx) {
+                const labels = {{ subjects_labels|json_encode|raw }};
+                const data = {{ subjects_data|json_encode|raw }};
+                const generalAvg = {{ generalAverage }};
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Moyenne par matière',
+                                data: data,
+                                backgroundColor: 'rgba(78, 115, 223, 0.1)',
+                                borderColor: '#4e73df',
+                                borderWidth: 3,
+                                pointBackgroundColor: '#fff',
+                                pointBorderColor: '#4e73df',
+                                pointRadius: 5,
+                                pointHoverRadius: 7,
+                                fill: true,
+                                tension: 0.4
+                            },
+                            {
+                                label: 'Moyenne Générale',
+                                data: Array(labels.length).fill(generalAvg),
+                                borderColor: '#1cc88a',
+                                borderWidth: 2,
+                                borderDash: [10, 5],
+                                pointRadius: 0,
+                                fill: false,
+                                tension: 0
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            intersect: false,
+                            mode: 'index',
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 20,
+                                grid: { borderDash: [2, 2], color: '#f0f0f0' }
+                            },
+                            x: {
+                                grid: { display: false }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                labels: { usePointStyle: true, boxWidth: 8 }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
 {% endblock %}
