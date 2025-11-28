@@ -23,9 +23,6 @@ class Student extends User
         $this->grades = new ArrayCollection();
     }
 
-    /**
-     * @return Collection<int, Grade>
-     */
     public function getGrades(): Collection
     {
         return $this->grades;
@@ -44,7 +41,6 @@ class Student extends User
     public function removeGrade(Grade $grade): static
     {
         if ($this->grades->removeElement($grade)) {
-            // set the owning side to null (unless already changed)
             if ($grade->getStudent() === $this) {
                 $grade->setStudent(null);
             }
@@ -73,5 +69,48 @@ class Student extends User
             }
         }
         return null;
+    }
+
+    public function getGradesBySubject(): array
+    {
+        $gradesBySubject = [];
+        $now = new \DateTime();
+
+        foreach ($this->getGrades() as $grade) {
+            $evaluation = $grade->getEvaluation();
+
+            if ($evaluation->getDatePublish() && $evaluation->getDatePublish() <= $now) {
+                $subjectLabel = $evaluation->getSubject()->getLabel();
+                $gradesBySubject[$subjectLabel][] = $grade;
+            }
+        }
+
+        return $gradesBySubject;
+    }
+
+    public function getAveragesBySubject(): array
+    {
+        $averages = [];
+        $gradesBySubject = $this->getGradesBySubject();
+
+        foreach ($gradesBySubject as $subject => $grades) {
+            $totalPoints = 0;
+            $totalBareme = 0;
+
+            foreach ($grades as $grade) {
+                if ($grade->isPresent() && $grade->getGrade() !== null) {
+                    $totalPoints += $grade->getGrade();
+                    $totalBareme += $grade->getEvaluation()->getBareme();
+                }
+            }
+
+            if ($totalBareme > 0) {
+                $averages[$subject] = round(($totalPoints / $totalBareme) * 20, 2);
+            } else {
+                $averages[$subject] = null;
+            }
+        }
+
+        return $averages;
     }
 }

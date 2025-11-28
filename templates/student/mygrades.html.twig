@@ -1,27 +1,86 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Student{% endblock %}
+{% block title %}Mes notes - NotePro{% endblock %}
 
 {% block body %}
-    <h1>Notes de {{ app.user.name }}</h1>
+    <div class="container py-5">
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-8 text-center">
+                <h1 class="display-5 fw-bold text-dark">Bulletin de notes</h1>
+                <p class="lead text-muted">{{ student.name }}</p>
+            </div>
+        </div>
 
-    <table class="table">
-        <thead>
-        <tr>
-            <th scope="col">Evaluation</th>
-            <th scope="col">Note</th>
-            <th scope="col">Barème</th>
-        </tr>
-        </thead>
-        <tbody>
-        {% for gr in student.grades %}
-        <tr>
-            <td>{{ gr.evaluation.label }}</td>
-            <td>{{ gr.grade }}</td>
-            <td>{{ gr.evaluation.bareme }}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                {% for subject, grades in gradesBySubject %}
+                    <div class="card shadow-sm border-0 mb-4 rounded-3 overflow-hidden">
+                        <div class="card-header bg-white border-bottom-0 p-4 d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary rounded-circle me-3" style="width: 10px; height: 10px;"></div>
+                                <h3 class="h5 fw-bold mb-0 text-dark">{{ subject }}</h3>
+                            </div>
+                            {% if averages[subject] is not null %}
+                                <span class="badge rounded-pill px-3 py-2 fs-6 {{ averages[subject] >= 10 ? 'text-bg-success' : 'text-bg-danger' }}">
+                                Moyenne : {{ averages[subject] }}/20
+                            </span>
+                            {% else %}
+                                <span class="badge rounded-pill text-bg-secondary px-3 py-2 fs-6">N/A</span>
+                            {% endif %}
+                        </div>
 
+                        <div class="card-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="bg-light text-uppercase fs-7 text-muted">
+                                    <tr>
+                                        <th scope="col" class="ps-4 py-3" style="width: 45%;">Évaluation</th>
+                                        <th scope="col" class="text-center py-3">Date</th>
+                                        <th scope="col" class="text-end py-3">Note</th>
+                                        <th scope="col" class="text-end pe-4 py-3">Barème</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for grade in grades %}
+                                        <tr class="border-bottom-0">
+                                            <td class="ps-4 fw-medium text-dark">{{ grade.evaluation.label }}</td>
+                                            <td class="text-center text-muted small">
+                                                {{ grade.evaluation.date ? grade.evaluation.date|date('d/m/Y') : '-' }}
+                                            </td>
+                                            <td class="text-end fw-bold fs-5">
+                                                {% if grade.present %}
+                                                    <span class="{{ grade.grade >= (grade.evaluation.bareme / 2) ? 'text-success' : 'text-danger' }}">
+                                                        {{ grade.grade }}
+                                                    </span>
+                                                {% else %}
+                                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle">ABS</span>
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-end pe-4 text-muted">
+                                                <small>/ {{ grade.evaluation.bareme }}</small>
+                                            </td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="4" class="text-center py-4 text-muted fst-italic">
+                                                Aucune note enregistrée pour cette matière.
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info d-flex align-items-center rounded-3 p-4 shadow-sm border-0" role="alert">
+                        <div class="flex-grow-1">
+                            <h4 class="alert-heading h5 fw-bold mb-1">Aucune information</h4>
+                            <p class="mb-0">Il n'y a aucune note disponible à l'affichage pour le moment.</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 {% endblock %}

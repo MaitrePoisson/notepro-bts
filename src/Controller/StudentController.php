@@ -40,7 +40,6 @@ class StudentController extends AbstractController
                 )
             );
 
-            //encode the plain password for saving it as a previous password
             $previousPassword = new PreviousPasswords($student);
             $previousPassword->setPassword(
                 $userPasswordHasher->hashPassword(
@@ -105,11 +104,13 @@ class StudentController extends AbstractController
     #[Route('/{id}/notes', name: 'app_student_notes', methods: ['GET', 'POST'])]
     public function notes(Student $student, EntityManagerInterface $entityManager): Response
     {
+        $gradesBySubject = $student->getGradesBySubject();
+        $averages = $student->getAveragesBySubject();
 
         return $this->render('student/mygrades.html.twig', [
             'student' => $student,
-            'grades' => $student->getGrades()
-
+            'gradesBySubject' => $gradesBySubject,
+            'averages' => $averages,
         ]);
     }
 }

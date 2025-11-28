@@ -4,7 +4,6 @@ namespace App\Form;
 
 use App\Entity\ClassLevel;
 use App\Entity\Evaluation;
-use App\Entity\Professor;
 use App\Entity\Subject;
 use App\Repository\ClassLevelRepository;
 use App\Repository\SubjectRepository;
@@ -23,23 +22,33 @@ class EvaluationType extends AbstractType
         $eval = $options['data'];
         $prof = $eval->getProfessor();
 
-        $subjects = $prof->getSubjects();
-        $classes = [];
-        $classes = $prof->getClassLevels();
-
         $builder
             ->add('date', DateType::class, [
                 'widget' => 'single_text',
+                'label' => 'Date de l\'évaluation',
+                'attr' => ['class' => 'form-control'],
+                'row_attr' => ['class' => 'mb-3'],
+            ])
+            ->add('datePublish', DateType::class, [
+                'widget' => 'single_text',
+                'label' => 'Date de publication des notes',
+                'required' => false,
+                'attr' => ['class' => 'form-control'],
+                'row_attr' => ['class' => 'mb-3'],
             ])
             ->add('label', TextType::class, [
-                'label' => 'Titre de l\'évaluation'
+                'label' => 'Titre de l\'évaluation',
+                'attr' => ['class' => 'form-control', 'placeholder' => 'Ex: Devoir surveillé n°1'],
+                'row_attr' => ['class' => 'mb-3'],
             ])
             ->add('bareme', IntegerType::class, [
-                'label' => 'Barème (/20, /10, ...)',
+                'label' => 'Barème',
                 'attr' => [
                     'min' => 0,
                     'max' => 100,
+                    'class' => 'form-control'
                 ],
+                'row_attr' => ['class' => 'mb-3'],
             ])
             ->add('subject', EntityType::class, [
                 'class' => Subject::class,
@@ -47,6 +56,8 @@ class EvaluationType extends AbstractType
                 'choice_label' => 'label',
                 'expanded' => false,
                 'multiple' => false,
+                'attr' => ['class' => 'form-select'],
+                'row_attr' => ['class' => 'mb-3'],
                 'query_builder' => function(SubjectRepository $er) use($prof){
                     return $er->findByProfessor($prof);
                 },
@@ -57,6 +68,8 @@ class EvaluationType extends AbstractType
                 'choice_label' => 'label',
                 'expanded' => false,
                 'multiple' => false,
+                'attr' => ['class' => 'form-select'],
+                'row_attr' => ['class' => 'mb-3'],
                 'query_builder' => function(ClassLevelRepository $er) use($prof){
                     return $er->findByProfessor($prof);
                 },

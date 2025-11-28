@@ -40,6 +40,9 @@ class Evaluation
     #[ORM\OneToMany(mappedBy: 'evaluation', targetEntity: Grade::class, orphanRemoval: true)]
     private Collection $grades;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $datePublish = null;
+
     public function __construct()
     {
         $this->grades = new ArrayCollection();
@@ -122,9 +125,6 @@ class Evaluation
         return $this;
     }
 
-    /**
-     * @return Collection<int, Grade>
-     */
     public function getGrades(): Collection
     {
         return $this->grades;
@@ -143,7 +143,6 @@ class Evaluation
     public function removeGrade(Grade $grade): static
     {
         if ($this->grades->removeElement($grade)) {
-            // set the owning side to null (unless already changed)
             if ($grade->getEvaluation() === $this) {
                 $grade->setEvaluation(null);
             }
@@ -160,5 +159,17 @@ class Evaluation
             }
         }
         return null;
+    }
+
+    public function getDatePublish(): ?\DateTimeInterface
+    {
+        return $this->datePublish;
+    }
+
+    public function setDatePublish(?\DateTimeInterface $datePublish): static
+    {
+        $this->datePublish = $datePublish;
+
+        return $this;
     }
 }
