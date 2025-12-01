@@ -3,6 +3,8 @@
     --secondary-color: #858796;
     --background-color: #f8f9fc;
     --card-border-radius: 0.75rem;
+    --indigo: #6610f2;
+    --orange: #fd7e14;
 }
 
 body {
@@ -15,7 +17,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    color: #7e99e3;
+    color: #4e73df;
     font-weight: 700;
 }
 
@@ -80,4 +82,61 @@ footer {
     padding: 2rem 0;
     box-shadow: 0 -0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
     margin-top: auto;
+}
+
+/* --- DESIGN PREMIUM NOTEPRO --- */
+
+/* Couleurs spécifiques */
+.text-indigo { color: var(--indigo) !important; }
+.bg-indigo-subtle { background-color: #e0cffc !important; }
+.btn-outline-indigo {
+    color: var(--indigo);
+    border-color: var(--indigo);
+}
+.btn-outline-indigo:hover {
+    background-color: var(--indigo);
+    color: white;
+}
+.border-indigo { border-color: var(--indigo) !important; }
+
+.text-orange { color: var(--orange) !important; }
+.bg-orange-subtle { background-color: #ffe5d0 !important; }
+
+.text-success { color: #198754 !important; }
+.bg-success-subtle { background-color: #d1e7dd !important; }
+
+/* Effets & Animations */
+.backdrop-blur {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+.ls-1 { letter-spacing: 1px; }
+.ls-2 { letter-spacing: 2px; }
+
+.card-hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: block;
+}
+
+.card-hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,.1) !important;
+}
+
+.hover-scale {
+    transition: transform 0.2s ease;
+}
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+/* Animation flottante douce */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+.float-animation {
+    animation: float 5s ease-in-out infinite;
 }

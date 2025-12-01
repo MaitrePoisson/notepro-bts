@@ -1,60 +1,75 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Saisie des notes{% endblock %}
+{% block title %}Saisie des notes - {{ evaluation.label }}{% endblock %}
 
 {% block body %}
-    <div class="container">
+    <div class="container py-5">
+        {# En-tête #}
+        <div class="row align-items-center mb-5">
+            <div class="col-md-8">
+                <span class="text-uppercase text-orange fw-bold ls-1 small">Saisie des résultats</span>
+                <h1 class="display-5 fw-bold text-dark mt-1">{{ evaluation.label }}</h1>
+                <div class="d-flex gap-2 mt-2">
+                    <span class="badge bg-success-subtle text-success">{{ evaluation.classLevel.label }}</span>
+                    <span class="badge bg-indigo-subtle text-indigo">{{ evaluation.subject.label }}</span>
+                    <span class="badge bg-light text-dark border">Barème /{{ evaluation.bareme }}</span>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end mt-4 mt-md-0">
+                <a href="{{ path('app_professor_evaluations', {id: app.user.id}) }}" class="btn btn-outline-secondary rounded-pill px-4">
+                    Annuler
+                </a>
+            </div>
+        </div>
+
         <div class="row justify-content-center">
             <div class="col-lg-10">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div>
-                        <h1 class="h3 mb-1">Saisie des notes</h1>
-                        <p class="text-muted mb-0">
-                            {{ evaluation.label }} <span class="mx-2">•</span>
-                            <span class="badge bg-primary">{{ evaluation.classLevel.label }}</span>
-                        </p>
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="card-header bg-orange-subtle py-3 px-4 border-bottom-0">
+                        <h5 class="mb-0 text-orange fw-bold">Liste des élèves</h5>
                     </div>
-                    <div class="text-end">
-                        <span class="fw-bold fs-5">Barème : /{{ evaluation.bareme }}</span>
-                    </div>
-                </div>
 
-                <div class="card shadow-sm border-0">
-                    <div class="card-header bg-light py-3">
-                        <div class="row">
-                            <div class="col-6 fw-bold text-uppercase fs-7 text-muted">Étudiant</div>
-                            <div class="col-4 fw-bold text-uppercase fs-7 text-muted text-center">Note</div>
-                            <div class="col-2 fw-bold text-uppercase fs-7 text-muted text-center">Absence</div>
-                        </div>
-                    </div>
-                    <div class="card-body">
+                    <div class="card-body p-0">
                         {{ form_start(form) }}
-                        <div class="vstack gap-3">
-                            {% for child in form %}
-                                {% if 'grade_' in child.vars.name %}
-                                    {% set studentId = child.vars.name|replace({'grade_': ''}) %}
-                                    {% set presenceField = form['presence_' ~ studentId] %}
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="bg-light">
+                                <tr>
+                                    <th class="ps-4 py-3 text-muted text-uppercase small">Élève</th>
+                                    <th class="py-3 text-muted text-uppercase small" style="width: 200px;">Note</th>
+                                    <th class="pe-4 py-3 text-muted text-uppercase small text-end">Absence</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for child in form %}
+                                    {% if 'grade_' in child.vars.name %}
+                                        {% set studentId = child.vars.name|replace({'grade_': ''}) %}
+                                        {% set presenceField = form['presence_' ~ studentId] %}
 
-                                    <div class="row align-items-center border-bottom pb-2">
-                                        <div class="col-6">
-                                            <label class="form-label fw-medium mb-0">{{ child.vars.label }}</label>
-                                        </div>
-                                        <div class="col-4">
-                                            {{ form_widget(child, {'attr': {'class': 'form-control text-center', 'placeholder': 'Note'}}) }}
-                                        </div>
-                                        <div class="col-2 text-center">
-                                            <div class="form-check d-inline-block form-switch">
-                                                {{ form_widget(presenceField, {'attr': {'class': 'form-check-input'}}) }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
+                                        <tr class="transition-colors">
+                                            <td class="ps-4 py-3">
+                                                <div class="fw-bold text-dark">{{ child.vars.label }}</div>
+                                            </td>
+                                            <td class="py-3">
+                                                <div class="input-group">
+                                                    {{ form_widget(child, {'attr': {'class': 'form-control border-0 bg-light fw-bold text-center', 'placeholder': '-'}}) }}
+                                                    <span class="input-group-text bg-white border-0 text-muted">/{{ evaluation.bareme }}</span>
+                                                </div>
+                                            </td>
+                                            <td class="pe-4 py-3 text-end">
+                                                <div class="form-check form-switch d-inline-block">
+                                                    {{ form_widget(presenceField, {'attr': {'class': 'form-check-input', 'style': 'cursor: pointer;'}}) }}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                </tbody>
+                            </table>
                         </div>
 
-                        <div class="d-flex justify-content-between mt-4 pt-3 border-top">
-                            <a href="{{ path('app_professor_evaluations', {id: app.user.id}) }}" class="btn btn-light text-muted">Annuler</a>
-                            {{ form_widget(form.submit, {'attr': {'class': 'btn btn-success px-5 rounded-pill'}}) }}
+                        <div class="card-footer bg-white border-top p-4 text-end">
+                            {{ form_widget(form.submit, {'attr': {'class': 'btn btn-orange text-white fw-bold rounded-pill px-5 py-2 shadow-sm hover-scale'}}) }}
                         </div>
                         {{ form_end(form, {'render_rest': false}) }}
                     </div>
@@ -62,4 +77,11 @@
             </div>
         </div>
     </div>
+
+    <style>
+        .bg-orange-subtle { background-color: #fff3cd !important; }
+        .text-orange { color: #fd7e14 !important; }
+        .btn-orange { background-color: #fd7e14; border-color: #fd7e14; }
+        .btn-orange:hover { background-color: #e36d0d; border-color: #e36d0d; }
+    </style>
 {% endblock %}

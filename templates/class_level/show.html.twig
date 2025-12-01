@@ -1,26 +1,85 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}ClassLevel{% endblock %}
+{% block title %}Classe {{ class_level.label }} - NotePro{% endblock %}
 
 {% block body %}
-    <h1>ClassLevel</h1>
+    {# --- En-tête (Thème Vert) --- #}
+    <div class="position-relative overflow-hidden mb-5 text-white shadow-sm"
+         style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); padding: 4rem 0 5rem;">
+        <div class="container position-relative z-1">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <div class="bg-white bg-opacity-25 p-3 rounded-4 me-4 backdrop-blur">
+                        <span class="display-4">🏫</span>
+                    </div>
+                    <div>
+                        <h6 class="text-uppercase ls-1 opacity-75 mb-1">Détail de la classe</h6>
+                        <h1 class="display-4 fw-bold mb-0">{{ class_level.label }}</h1>
+                    </div>
+                </div>
+                <div>
+                    <a href="{{ path('app_professor_classes', {id: app.user.id}) }}" class="btn btn-white bg-white text-success fw-bold rounded-pill px-4 shadow-sm hover-scale">
+                        ← Retour aux classes
+                    </a>
+                </div>
+            </div>
+        </div>
+        {# Vague de fond #}
+        <div class="position-absolute bottom-0 start-0 w-100 overflow-hidden" style="line-height: 0;">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" style="width: 100%; height: 60px; fill: var(--background-color); transform: rotate(180deg);">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"></path>
+            </svg>
+        </div>
+    </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ class_level.id }}</td>
-            </tr>
-            <tr>
-                <th>Label</th>
-                <td>{{ class_level.label }}</td>
-            </tr>
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_class_level_index') }}">back to list</a>
-
-    <a href="{{ path('app_class_level_edit', {'id': class_level.id}) }}">edit</a>
-
-    {{ include('class_level/_delete_form.html.twig') }}
+    <div class="container" style="margin-top: -3rem;">
+        <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+            <div class="card-header bg-white py-4 px-5 border-bottom">
+                <h4 class="mb-0 fw-bold text-dark">
+                    Liste des élèves
+                    <span class="badge bg-success-subtle text-success fs-6 align-middle ms-2 rounded-pill">{{ class_level.students|length }} inscrits</span>
+                </h4>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="bg-light">
+                        <tr>
+                            <th class="ps-5 py-3 text-muted text-uppercase small">Nom complet</th>
+                            <th class="py-3 text-muted text-uppercase small">Email</th>
+                            <th class="pe-5 py-3 text-end text-muted text-uppercase small">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for student in class_level.students %}
+                            <tr>
+                                <td class="ps-5 py-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="rounded-circle bg-light text-secondary d-flex align-items-center justify-content-center fw-bold me-3" style="width: 40px; height: 40px;">
+                                            {{ student.name|slice(0, 1) }}
+                                        </div>
+                                        <span class="fw-bold text-dark">{{ student.name }}</span>
+                                    </div>
+                                </td>
+                                <td class="py-3 text-muted">{{ student.email }}</td>
+                                <td class="pe-5 py-3 text-end">
+                                    {# Vous pourrez ajouter des actions ici, comme 'Voir Bulletin' #}
+                                    <a href="{{ path('app_student_notes', {id: student.id}) }}" class="btn btn-sm btn-outline-success rounded-pill px-3">
+                                        Bulletin
+                                    </a>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="3" class="text-center py-5 text-muted">
+                                    Aucun élève inscrit dans cette classe.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

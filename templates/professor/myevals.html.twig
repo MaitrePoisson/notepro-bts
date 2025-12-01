@@ -1,70 +1,90 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes évaluations{% endblock %}
+{% block title %}Mes Évaluations - NotePro{% endblock %}
 
 {% block body %}
-    <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="h2">Gestion des évaluations</h1>
-            <a href="{{ path('app_evaluation_new') }}" class="btn btn-primary rounded-pill px-4">
-                + Nouvelle évaluation
+    {# --- Bannière Hero (Thème Orange) --- #}
+    <div class="hero-banner text-white position-relative overflow-hidden mb-5"
+         style="background: linear-gradient(135deg, #FF512F 0%, #F09819 100%); margin-top: -3rem; padding-top: 6rem; padding-bottom: 9rem;">
+
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="opacity: 0.1;">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="w-100 h-100">
+                <path d="M0 100 C 20 0 50 0 100 100 Z" fill="white" />
+                <rect x="10" y="10" width="20" height="20" rx="5" fill="white" transform="rotate(45 20 20)" />
+            </svg>
+        </div>
+
+        <div class="container position-relative z-1 text-center">
+            <div class="mb-4 d-inline-block p-3 rounded-circle bg-white bg-opacity-20 backdrop-blur shadow-sm">
+                <span class="fs-1">📝</span>
+            </div>
+            <h1 class="display-4 fw-bold mb-3">Mes Évaluations</h1>
+            <p class="lead opacity-90 mb-5 mx-auto" style="max-width: 600px;">
+                Gérez vos devoirs, contrôles et examens. Créez-en de nouveaux et saisissez les notes de vos élèves.
+            </p>
+
+            <a href="{{ path('app_evaluation_new') }}" class="btn btn-light text-orange fw-bold rounded-pill px-5 py-3 shadow-lg hover-scale">
+                + Nouvelle Évaluation
             </a>
         </div>
 
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="bg-light">
-                        <tr>
-                            <th class="ps-4 py-3">Titre</th>
-                            <th class="py-3">Classe</th>
-                            <th class="py-3">Matière</th>
-                            <th class="text-center py-3">Date</th>
-                            <th class="text-center py-3">Publication</th>
-                            <th class="text-end pe-4 py-3">Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for eval in evals %}
-                            <tr>
-                                <td class="ps-4 fw-bold text-dark">{{ eval.label }}</td>
-                                <td><span class="badge bg-info text-dark">{{ eval.classLevel.label }}</span></td>
-                                <td>{{ eval.subject.label }}</td>
-                                <td class="text-center">{{ eval.date ? eval.date|date('d/m/Y') : '' }}</td>
-                                <td class="text-center">
-                                    {% if eval.datePublish %}
-                                        {% if eval.datePublish <= date() %}
-                                            <span class="badge bg-success rounded-pill">Publié</span>
-                                        {% else %}
-                                            <span class="badge bg-warning text-dark rounded-pill">Différé au {{ eval.datePublish|date('d/m') }}</span>
-                                        {% endif %}
-                                    {% else %}
-                                        <span class="badge bg-secondary rounded-pill">Non défini</span>
-                                    {% endif %}
-                                </td>
-                                <td class="text-end pe-4">
-                                    <div class="btn-group">
-                                        <a href="{{ path('app_evaluation_set_grades', {id: eval.id}) }}" class="btn btn-sm btn-outline-primary">
-                                            Saisir notes
-                                        </a>
-                                        <a href="{{ path('app_evaluation_edit', {id: eval.id}) }}" class="btn btn-sm btn-outline-secondary">
-                                            Modifier
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        {% else %}
-                            <tr>
-                                <td colspan="6" class="text-center py-5 text-muted">
-                                    Vous n'avez créé aucune évaluation pour le moment.
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        {# Vague de transition #}
+        <div class="position-absolute bottom-0 start-0 w-100 overflow-hidden" style="line-height: 0;">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" style="width: 100%; height: 80px; fill: var(--background-color); transform: rotate(180deg);">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"></path>
+            </svg>
         </div>
     </div>
+
+    <div class="container" style="margin-top: -5rem;">
+        <div class="row g-4">
+            {% for eval in evals %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover-lift">
+                        <div class="card-header bg-white border-0 pt-4 px-4 d-flex justify-content-between align-items-start">
+                            <span class="badge bg-light text-dark border">{{ eval.date ? eval.date|date('d/m/Y') : 'Date N/A' }}</span>
+                            {% if eval.datePublish and eval.datePublish <= date() %}
+                                <span class="badge bg-success-subtle text-success rounded-pill px-2">Publié</span>
+                            {% else %}
+                                <span class="badge bg-warning-subtle text-warning-emphasis rounded-pill px-2">Brouillon</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="card-body px-4 pt-2 pb-4">
+                            <h5 class="card-title fw-bold text-dark mb-2">{{ eval.label }}</h5>
+                            <div class="mb-3">
+                                <span class="badge bg-indigo-subtle text-indigo me-1">{{ eval.subject.label }}</span>
+                                <span class="badge bg-success-subtle text-success">{{ eval.classLevel.label }}</span>
+                            </div>
+                            <p class="text-muted small mb-0">
+                                Barème : <span class="fw-bold text-dark">/{{ eval.bareme }}</span>
+                            </p>
+                        </div>
+
+                        <div class="card-footer bg-light border-0 px-4 py-3 d-flex justify-content-between align-items-center">
+                            <a href="{{ path('app_evaluation_set_grades', {id: eval.id}) }}" class="btn btn-orange btn-sm rounded-pill px-3 fw-bold text-white shadow-sm hover-scale">
+                                ✍️ Noter
+                            </a>
+                            <a href="{{ path('app_evaluation_edit', {id: eval.id}) }}" class="btn btn-white btn-sm text-muted hover-scale">
+                                ⚙️ Modifier
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-light text-center py-5 shadow-sm border-0 rounded-4">
+                        <div class="mb-3 fs-1 opacity-50">📂</div>
+                        <h4 class="text-muted fw-bold">Aucune évaluation</h4>
+                        <p class="text-muted">Commencez par créer votre premier devoir.</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <style>
+        .btn-orange { background-color: #fd7e14; border-color: #fd7e14; }
+        .btn-orange:hover { background-color: #e36d0d; border-color: #e36d0d; }
+    </style>
 {% endblock %}

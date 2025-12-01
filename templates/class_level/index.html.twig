@@ -1,35 +1,94 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}ClassLevel index{% endblock %}
+{% block title %}Gestion des Classes - NotePro{% endblock %}
 
 {% block body %}
-    <h1>ClassLevel index</h1>
+    {# --- Bannière Hero (Thème Vert/Teal) --- #}
+    <div class="hero-banner text-white position-relative overflow-hidden mb-5"
+         style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); margin-top: -3rem; padding-top: 6rem; padding-bottom: 9rem;">
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Label</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for class_level in class_levels %}
-            <tr>
-                <td>{{ class_level.id }}</td>
-                <td>{{ class_level.label }}</td>
-                <td>
-                    <a href="{{ path('app_class_level_show', {'id': class_level.id}) }}">show</a>
-                    <a href="{{ path('app_class_level_edit', {'id': class_level.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        {# Fond décoratif #}
+        <div class="position-absolute top-0 start-0 w-100 h-100" style="opacity: 0.1;">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" class="w-100 h-100">
+                <path d="M0 100 C 20 0 50 0 100 100 Z" fill="white" />
+                <circle cx="80" cy="20" r="10" fill="white" />
+            </svg>
+        </div>
 
-    <a href="{{ path('app_class_level_new') }}">Create new</a>
+        <div class="container position-relative z-1 text-center">
+            <div class="mb-4 d-inline-block p-3 rounded-circle bg-white bg-opacity-20 backdrop-blur shadow-sm">
+                <span class="fs-1">🏫</span>
+            </div>
+
+            <h1 class="display-4 fw-bold mb-3">Gestion des Classes</h1>
+            <p class="lead opacity-90 mb-5 mx-auto" style="max-width: 600px;">
+                Administrez les niveaux scolaires, créez de nouveaux groupes et organisez la structure de l'établissement.
+            </p>
+
+            <a href="{{ path('app_class_level_new') }}" class="btn btn-light text-success fw-bold rounded-pill px-5 py-3 shadow-lg hover-scale">
+                + Créer une nouvelle classe
+            </a>
+        </div>
+
+        {# Vague de transition #}
+        <div class="position-absolute bottom-0 start-0 w-100 overflow-hidden" style="line-height: 0;">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" style="width: 100%; height: 80px; fill: var(--background-color); transform: rotate(180deg);">
+                <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"></path>
+            </svg>
+        </div>
+    </div>
+
+    <div class="container" style="margin-top: -5rem;">
+        {# Grille des classes #}
+        <div class="row g-4">
+            {% for class_level in class_levels %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover-lift">
+                        <div class="card-body p-4 text-center position-relative">
+                            {# Indicateur décoratif #}
+                            <div class="position-absolute top-0 end-0 m-3 opacity-25 text-muted fw-bold fs-1" style="line-height: 0.8;">
+                                {{ class_level.id }}
+                            </div>
+
+                            <div class="bg-success-subtle text-success rounded-circle d-inline-flex p-3 mb-3 shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            </div>
+
+                            <h3 class="h4 fw-bold text-dark mb-3">{{ class_level.label }}</h3>
+
+                            {# Si vous pouvez récupérer le nombre d'élèves, c'est ici qu'on l'affiche.
+                               Sinon, on peut mettre un texte générique #}
+                            <p class="text-muted small mb-4">
+                                {% if class_level.students is defined %}
+                                    <span class="badge bg-light text-dark border">{{ class_level.students|length }} Élèves inscrits</span>
+                                {% else %}
+                                    <span class="badge bg-light text-dark border">Niveau Actif</span>
+                                {% endif %}
+                            </p>
+
+                            <div class="d-flex justify-content-center gap-2">
+                                <a href="{{ path('app_class_level_show', {'id': class_level.id}) }}" class="btn btn-outline-success rounded-pill px-4 fw-bold btn-sm">
+                                    Voir
+                                </a>
+                                <a href="{{ path('app_class_level_edit', {'id': class_level.id}) }}" class="btn btn-light text-muted rounded-pill px-3 btn-sm hover-scale" title="Modifier">
+                                    ✏️
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-light text-center py-5 shadow-sm border-0 rounded-4">
+                        <div class="mb-3 fs-1 text-muted opacity-50">📭</div>
+                        <h4 class="text-muted fw-bold">Aucune classe trouvée</h4>
+                        <p class="text-muted mb-4">La liste est vide pour le moment. Commencez par créer une structure.</p>
+                        <a href="{{ path('app_class_level_new') }}" class="btn btn-success rounded-pill px-4">
+                            Créer la première classe
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}

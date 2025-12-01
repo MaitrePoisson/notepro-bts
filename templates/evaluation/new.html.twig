@@ -1,13 +1,80 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Nouvelle évaluation{% endblock %}
+{% block title %}Nouvelle évaluation - NotePro{% endblock %}
 
 {% block body %}
-    <div class="container">
-    <h1>Créer une évaluation</h1>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
 
-    {{ include('evaluation/_form.html.twig') }}
+                <div class="text-center mb-4">
+                    <div class="mb-3 d-inline-block p-3 rounded-circle bg-orange-subtle text-orange shadow-sm">
+                        <span class="fs-2">📝</span>
+                    </div>
+                    <h1 class="h3 fw-bold">Nouvelle Évaluation</h1>
+                    <p class="text-muted">Configurez les détails du devoir.</p>
+                </div>
 
-    <a href="{{ path('app_evaluation_index') }}">back to list</a>
+                <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                    <div class="card-body p-4 p-md-5">
+                        {{ form_start(form) }}
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Titre</label>
+                            {{ form_widget(form.label, {'attr': {'class': 'form-control form-control-lg bg-light border-0', 'placeholder': 'Ex: Contrôle Chapitre 1'}}) }}
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Matière</label>
+                                {{ form_widget(form.subject, {'attr': {'class': 'form-select bg-light border-0'}}) }}
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Classe</label>
+                                {{ form_widget(form.classLevel, {'attr': {'class': 'form-select bg-light border-0'}}) }}
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Barème</label>
+                                <div class="input-group">
+                                    <span class="input-group-text border-0 bg-light">/</span>
+                                    {{ form_widget(form.bareme, {'attr': {'class': 'form-control bg-light border-0'}}) }}
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Date examen</label>
+                                {{ form_widget(form.date, {'attr': {'class': 'form-control bg-light border-0'}}) }}
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="form-label fw-bold small text-uppercase text-muted">Publication des notes</label>
+                            {{ form_widget(form.datePublish, {'attr': {'class': 'form-control bg-light border-0'}}) }}
+                            <div class="form-text small">Laissez vide pour publier plus tard.</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-orange text-white fw-bold py-3 rounded-pill shadow-sm hover-scale">
+                                Enregistrer l'évaluation
+                            </button>
+                            <a href="{{ path('app_professor_evaluations', {id: app.user.id}) }}" class="btn btn-light text-muted fw-bold py-3 rounded-pill mt-2">
+                                Annuler
+                            </a>
+                        </div>
+
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <style>
+        .bg-orange-subtle { background-color: #fff3cd !important; }
+        .text-orange { color: #fd7e14 !important; }
+        .btn-orange { background-color: #fd7e14; border-color: #fd7e14; }
+        .btn-orange:hover { background-color: #e36d0d; border-color: #e36d0d; }
+    </style>
 {% endblock %}
